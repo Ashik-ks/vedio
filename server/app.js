@@ -10,9 +10,9 @@ const userRouter = require('./router/userRouter.js')
 
 app.use(express.static('../client'))
 app.use(express.json());
-app.use(express.urlencoded({extended: true }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads',express.static("./uploads"));
-app.use(express.json({ limit: "900mb" }));
+app.use(express.json({ limit: "50mb" }));
 app.use(userRouter);
 
 app.listen(process.env.PORT,() =>{

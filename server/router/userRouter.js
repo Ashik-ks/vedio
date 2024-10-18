@@ -1,8 +1,14 @@
-const express = require("express")
+const express = require('express');
+const upload = require('../router/multerConfig'); // Import multer config
+const { uploadVideo, getVideo } = require('../controller/userController');
+
 const router = express.Router();
-const userController = require('../controller/userController');
 
-router.post('/users', userController.Adduser);
-// router.get('/users',userController.GetAlluser);
+// Route to upload video
+router.post('/upload', upload.single('file'), uploadVideo); // Use multer here
 
-module.exports = router
+// Route to get video by ID
+router.get('/video/:id', getVideo);
+
+module.exports = router;
+

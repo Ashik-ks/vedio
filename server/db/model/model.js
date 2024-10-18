@@ -1,16 +1,23 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-let user = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name: {
-        type :String,
-        // required : true,
+        type: String,
+        required: true, // Uncomment to enforce name is required
     },
-    vedio: {
-        type :String,
-        // required : true,
+    video: {
+        filename: {
+            type: String,
+            required: true, // Uncomment if you want to require the filename
+        },
+        bucketName: {
+            type: String,
+            default: 'videos', // Default bucket name
+        },
+        // Add other fields as needed (e.g., file size, content type)
     },
-    
-})
+}, { timestamps: true }); // Optional: adds createdAt and updatedAt fields
 
-let User = mongoose.model('user',user)
+const User = mongoose.model('User', userSchema);
+
 module.exports = User;

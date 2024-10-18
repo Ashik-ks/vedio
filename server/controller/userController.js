@@ -1,45 +1,43 @@
-let users = require('../db/model/model');
-const { success_function, error_function } = require('../utils');
-const fileUpload = require('../utils/file-upload').fileUpload;
-const path = require('path');
+const mongoose = require('mongoose');
+const { GridFsStorage } = require('multer-gridfs-storage');
+// const multer = require('multer');
+// const crypto = require('crypto');
 
-exports.Adduser = async function (req, res) {
-    try {
-        let body = req.body;
-        console.log("bodys : ", body);
 
-        let vedio = body.vedio;
-        console.log("vedio : ", vedio)
-
-        if (vedio) {
-            let vdio_path = await fileUpload(vedio, "Users");
-            console.log("vdio_path", vdio_path);
-            body.vedio = vdio_path
-        }
-
-        let newbody = {
-            name : req.body.name,
-            vedio : req.body.vedio,
-        }
-
-        let Add_user = await users.create(newbody);
-        console.log("Add_user : ", Add_user)
-
-        let response = {
-            success: true,
-            statuscode: 200,
-            message: "user added succesfully",
-        }
-        res.status(response.statuscode).send(response);
-        return;
-
-    } catch (error) {
-        console.log("error : ", error)
-        let response = {
-            success: false,
-            statuscode: 400,
-            message: "user not added",
-        }
-        res.status(response.statuscode).send(response);
+// Upload video function
+exports.uploadVideo = (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded.' });
     }
-}
+
+    res.status(200).json({
+        message: 'Video uploaded successfully!',
+        file: req.file,
+    });
+};
+
+// Get video by ID function
+exports.getVideo = (req, res) => {
+    const gfs = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+        bucketName: 'videos',
+    });
+    const videoId = req.params.id;
+
+    const downloadStream = gfs.openDownloadStream(mongoose.Types.ObjectId(videoId));
+    downloadStream.on('data', (data) => {
+        res.write(data);
+    });
+
+    downloadStream.on('error', () => {
+        res.status(404).send('Video not found');
+    });
+
+    downloadStream.on('end', () => {
+        res.end();
+    });
+};
+
+
+
+
+
