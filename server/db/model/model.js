@@ -8,8 +8,9 @@ const userSchema = new mongoose.Schema({
     video: {
         filename: {
             type: String,
-            required: true, // Uncomment if you want to require the filename
+            required: true
         },
+        // other fields...
     },
 }, { timestamps: true }); // Optional: adds createdAt and updatedAt fields
 

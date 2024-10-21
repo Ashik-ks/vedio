@@ -7,52 +7,45 @@ const fileUpload = require('../utils/file-upload').fileUpload
 exports.Addvedio = async function (req, res) {
     try {
         let body = req.body;
-        console.log("body : ", body);
+        console.log("Request body:", JSON.stringify(body, null, 2));
 
         let vedio = body.vedio;
-        console.log("vedio : ", vedio)
-
-        
+        console.log("Video file:", vedio);
 
         if (vedio) {
             let vdio_path = await fileUpload(vedio, "vedio");
-            console.log("vdio_path", vdio_path);
-            body.vedio = vdio_path
+            console.log("vdio_path:", vdio_path);
+            body.video = { filename: vdio_path };  // Set video.filename correctly
         }
-     
-        
 
         let Add_vedio = await users.create(body);
-        console.log("Add_vedio : ", Add_vedio)
+        console.log("Database response:", Add_vedio);
 
         if (Add_vedio) {
-
-            let response = {
+            res.status(200).send({
                 success: true,
                 statuscode: 200,
-                message: "vedio added succesfully",
-            }
-            res.status(response.statuscode).send(response);
-            return;
+                message: "Video added successfully",
+            });
         } else {
-            let response = {
+            res.status(400).send({
                 success: false,
                 statuscode: 400,
-                message: "vedio not added",
-            }
-            res.status(response.statuscode).send(response);
+                message: "Video not added",
+            });
         }
 
     } catch (error) {
-        console.log("error : ", error)
-        let response = {
+        console.error("Error occurred:", error);
+        res.status(500).send({
             success: false,
-            statuscode: 400,
-            message: "vedio not added",
-        }
-        res.status(response.statuscode).send(response);
+            statuscode: 500,
+            message: "An error occurred while adding the video",
+        });
     }
 }
+
+
 
 
 

@@ -1,66 +1,47 @@
-const dayjs =  require('dayjs');
-let fs = require('fs');
+const fs = require('fs');
+const dayjs = require('dayjs');
 
-exports.fileUpload = async function (file,directory){
-return new Promise((resolve,reject)=>{
-    try {
-        // console.log('file',file)ire
-        // console.log("directory",directory)
+exports.fileUpload = async function (file, directory) {
+    return new Promise((resolve, reject) => {
+        try {
+            let mime_type = file.split(';')[0].split('/')[1];
+            console.log("mime_type:", mime_type);
 
-        let mime_type = file.split(';')[0].split('/')[1];
-        console.log("mime_type",mime_type);
+            const allowedTypes = ["png", "jpeg", "jpg", "mp4", "mp3", "pdf","webp","video"];
+            if (!allowedTypes.includes(mime_type)) {
+                return reject("File type not allowed. Allowed types are: " + allowedTypes.join(", "));
+            }
+            console.log("Allowed file type");
 
-        if(mime_type === "png" || "jpeg" || "jpg" || "mp4" || "mp3" || "pdf"){
-            console.log("allowed file type");
-
-           
-
-            let filename  = dayjs() + String(Math.floor(Math.random()*100)) + "."+mime_type;
-            console.log("filename : ",filename);
+            let filename = `${dayjs().format('YYYYMMDDHHmmss')}${Math.floor(Math.random() * 100)}.${mime_type}`;
+            console.log("filename:", filename);
 
             let upload_path = `uploads/${directory}`;
-            console.log("upload_path : ",upload_path);
+            console.log("upload_path:", upload_path);
 
-            // console.log("file : ",file)
-            
-            
             let base64 = file.split(';base64,')[1];
-            console.log("base64",base64);
+            console.log("base64 length:", base64 ? base64.length : 0);
 
-            fs.mkdir(upload_path,{recursive : true},(err)=>{
-                if(err){
-                    reject(err.message ? err.message : err);
+            fs.mkdir(upload_path, { recursive: true }, (err) => {
+                if (err) {
+                    return reject(err.message ? err.message : err);
+                } else {
+                    let full_upload_path = `${upload_path}/${filename}`;
+                    console.log("full_upload_path:", full_upload_path);
 
-                }else{
-                    let upload_path = `uploads/${directory}/${filename}`;
-                    console.log("upload_path : " ,upload_path);
-
-                    fs.writeFile(
-                        upload_path,
-                        base64,
-                        {encoding : "base64"},
-                        function(err){
-                            if(err){
-                                console.log('err',err);
-                                reject(err.message ? err.message : err);
-                            }
-                            else{
-                                resolve(upload_path)
-                            }
+                    fs.writeFile(full_upload_path, base64, { encoding: "base64" }, function (err) {
+                        if (err) {
+                            console.log('Error writing file:', err);
+                            return reject(err.message ? err.message : err);
+                        } else {
+                            resolve(full_upload_path);
                         }
-                    )
+                    });
                 }
-            })
-
-
-            
+            });
+        } catch (error) {
+            console.error("Error in fileUpload:", error);
+            reject("An unexpected error occurred");
         }
-        else{
-            reject("file size upto 100mb ")
-        }
-    } catch (error) {
-        
-    }
-})
-
+    });
 }
