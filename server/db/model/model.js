@@ -10,11 +10,6 @@ const userSchema = new mongoose.Schema({
             type: String,
             required: true, // Uncomment if you want to require the filename
         },
-        bucketName: {
-            type: String,
-            default: 'videos', // Default bucket name
-        },
-        // Add other fields as needed (e.g., file size, content type)
     },
 }, { timestamps: true }); // Optional: adds createdAt and updatedAt fields
 
