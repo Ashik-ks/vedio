@@ -9,11 +9,11 @@ exports.Addvedio = async function (req, res) {
         let body = req.body;
         console.log("Request body:", JSON.stringify(body, null, 2));
 
-        let vedio = body.vedio;
-        console.log("Video file:", vedio);
+        let video = body.video;
+        console.log("Video file:",video);
 
-        if (vedio) {
-            let vdio_path = await fileUpload(vedio, "vedio");
+        if (video) {
+            let vdio_path = await fileUpload(video, "vedio");
             console.log("vdio_path:", vdio_path);
             body.video = { filename: vdio_path };  // Set video.filename correctly
         }
