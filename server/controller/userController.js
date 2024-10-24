@@ -45,6 +45,33 @@ exports.Addvedio = async function (req, res) {
     }
 }
 
+exports.getvedio = async function (req,res) {
+
+
+    try {
+        
+        let user = await users.find();
+        console.log("user : ",user);
+
+        if(user) {
+            res.status(200).send({
+                success: true,
+                statuscode: 200,
+                message: "Video getted successfully",
+                data : user
+            });
+        }
+
+    } catch (error) {
+        console.error("Error occurred:", error);
+        res.status(500).send({
+            success: false,
+            statuscode: 500,
+            message: "An error occurred while getting the video",
+        });
+    }
+}
+
 
 
 

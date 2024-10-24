@@ -6,15 +6,23 @@ dotenv.config();
 const mongoConnect = require("../server/db/connect");
 mongoConnect();
 
-const userRouter = require('./router/userRouter.js')
+const userRouter = require('./router/userRouter.js');
 
-app.use(express.static('../client'))
-app.use(express.json());
-app.use(express.urlencoded({ limit: '100mb', extended: true }));
-app.use('/uploads',express.static("./uploads"));
-app.use(express.json({ limit: "100mb" }));
+// Serve static files from the client directory
+app.use(express.static('../client'));
+
+// Increase size limits for JSON and URL-encoded data
+const requestLimit = '500mb'; // You can adjust this as needed
+app.use(express.json({ limit: requestLimit }));
+app.use(express.urlencoded({ limit: requestLimit, extended: true }));
+
+// Serve files from the uploads directory
+app.use('/uploads', express.static("./uploads"));
+
+// Use user router for handling user-related routes
 app.use(userRouter);
 
-app.listen(process.env.PORT,() =>{
-    console.log(`server is running at http://localhost:${process.env.PORT}`)
-})
+// Start the server
+app.listen(process.env.PORT, () => {
+    console.log(`Server is running at http://localhost:${process.env.PORT}`);
+});
